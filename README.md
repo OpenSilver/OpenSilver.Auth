@@ -148,7 +148,7 @@ JWT and Google OAuth configuration:
     "Hours": 2
   },
   "Google": {
-    "ClientId": "Client ID generated from Google Cloud Console"
+    "ClientId": "YOUR_GOOGLE_CLIENT_ID"
   }
 }
 ```

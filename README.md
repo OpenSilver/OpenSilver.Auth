@@ -1,144 +1,100 @@
 # OpenSilver Google OAuth Authentication Demo
 
-A complete example implementing Google OAuth authentication between an OpenSilver client and ASP.NET Core Minimal API backend. Includes production-ready patterns and security best practices.
+A complete example implementing Google OAuth authentication between an OpenSilver client and ASP.NET Core backend.
 
-**Key Features:**
-- User authentication via Google OAuth 2.0
+## Key Features
+- Google account login (Authorization Code Flow)
 - JWT token-based API security
-- HTTPS enforcement and CORS configuration
-- Secure token exchange between client and server
+- Configuration file-based setup
 
-## Implemented Authentication Providers
-
-| Provider | Status | Description |
-|----------|--------|-------------|
-| Google OAuth 2.0 | ✅ Complete | Google account login, ID token validation, JWT issuance |
-
-## Exploring the Project
-
-```bash
-git clone https://github.com/opensilver/opensilver.auth
-```
-
-The project consists of two main parts:
+## Project Structure
 
 ```
 OpenSilverAuthClient/
 ├── OpenSilverAuthClient.Browser/       # Client (OpenSilver)
 │   ├── wwwroot/
-│   │   ├── index.html                  # Google OAuth configuration
-│   │   └── libs/auth.js                # Client authentication logic
-│   └── Properties/launchSettings.json
-├── OpenSilverAuthClient.Server/        # Server (Minimal API)
+│   │   ├── index.html                  # Google OAuth config and callback handling
+│   │   └── libs/auth.js                # Authentication logic
+│   └── AuthBar.xaml                    # Login UI
+├── OpenSilverAuthClient.Server/        # Server (ASP.NET Core)
 │   ├── Program.cs                      # Backend authentication logic
-│   └── appsettings.json                # JWT and Google settings
+│   └── appsettings.json               # JWT and Google settings
 ```
 
-## Client Implementation (OpenSilver)
+## Authentication Flow
+
+1. User clicks "Login with Google" button
+2. Redirects to Google login page
+3. After login completion, returns to site with authorization code
+4. Client sends code to backend API
+5. Backend exchanges code for access token and generates JWT token
+
+## Client Implementation
 
 ### `wwwroot/index.html`
-Google OAuth library loading and basic configuration:
-
 ```javascript
-// Google OAuth configuration
+// Google OAuth configuration (change to actual values)
 window.AUTH_CFG = {
-    apiBase: "https://localhost:7224",
-    googleClientId: "YOUR_GOOGLE_CLIENT_ID",
+    apiBase: "https://localhost:7224",  // Change to actual backend API server address
+    googleClientId: "YOUR_GOOGLE_CLIENT_ID",  // Change to client ID generated from Google Cloud Console
     storageKey: "accessToken"
 };
 
-// Load Google GSI library
-<script src="https://accounts.google.com/gsi/client" onload="onGoogleLibraryLoad()"></script>
+// Authorization code callback handling
+const code = new URLSearchParams(window.location.search).get('code');
+if (code) {
+    fetch(window.AUTH_CFG.apiBase + "/auth/google", {
+        method: "POST",
+        body: JSON.stringify({ code: code })
+    })
+    .then(response => response.json())
+    .then(data => localStorage.setItem(window.AUTH_CFG.storageKey, data.accessToken));
+}
 ```
 
 ### `wwwroot/libs/auth.js`
-Core client authentication logic:
-
 ```javascript
-async function login() {
-    // Initialize Google OAuth
-    google.accounts.id.initialize({
+function login() {
+    const params = new URLSearchParams({
         client_id: CFG.googleClientId,
-        callback: async (resp) => {
-            // Send Google ID token to backend
-            const r = await fetch(CFG.apiBase + "/auth/google", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ idToken: resp.credential })
-            });
-            // Store JWT token in localStorage
-            const data = await r.json();
-            localStorage.setItem(KEY, data.accessToken);
-        }
+        redirect_uri: window.location.origin,  // Automatically uses current page origin
+        response_type: 'code',
+        scope: 'email profile openid',
+        prompt: 'select_account'
     });
-    google.accounts.id.prompt();
+    window.location.href = `https://accounts.google.com/o/oauth2/auth?${params}`;
 }
 ```
 
-**Process Flow:**
-1. User clicks "Login with Google" button
-2. Google OAuth popup displays
-3. After user login completion, ID token is received
-4. ID token is sent to backend API
-5. JWT token received from backend and stored in localStorage
-
-### `Properties/launchSettings.json`
-HTTPS development environment configuration:
-
-```json
-{
-  "profiles": {
-    "OpenSilverAuthClient.Browser": {
-      "applicationUrl": "https://localhost:55922;http://localhost:55592"
-    }
-  }
-}
-```
-
-## Server Implementation (ASP.NET Core Minimal API)
+## Server Implementation
 
 ### `Program.cs`
-Complete backend authentication pipeline:
+Core logic for exchanging authorization code to JWT token:
 
 ```csharp
-// 1. Load configuration
+// Load configuration values
 var googleCid = cfg["Google:ClientId"]!;
-var jwtKey = cfg["Jwt:Key"]!;
+var googleSecret = cfg["Google:ClientSecret"]!;
+var clientOrigin = cfg["Client:Origin"]!;
 
-// 2. CORS configuration (allow client origin)
-builder.Services.AddCors(p => p.AddDefaultPolicy(b =>
-    b.WithOrigins("https://localhost:55922")
-     .AllowAnyHeader()
-     .AllowAnyMethod()
-     .AllowCredentials()));
-
-// 3. JWT authentication setup
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(/* JWT token validation settings */);
-
-// 4. Google ID token → JWT conversion endpoint
-app.MapPost("/auth/google", async (GoogleExchange body) => {
-    // Validate Google ID token
-    var payload = await GoogleJsonWebSignature.ValidateAsync(
-        body.idToken,
-        new GoogleJsonWebSignature.ValidationSettings { 
-            Audience = new[] { googleCid } 
-        });
+// Google OAuth → JWT token exchange
+app.MapPost("/auth/google", async (GoogleExchange body, IHttpClientFactory httpClientFactory) => {
+    // 1. Exchange authorization code for access token
+    var tokenRequest = new FormUrlEncodedContent(new[] {
+        new KeyValuePair<string, string>("client_id", googleCid),
+        new KeyValuePair<string, string>("client_secret", googleSecret),
+        new KeyValuePair<string, string>("code", body.code),
+        new KeyValuePair<string, string>("redirect_uri", clientOrigin)
+    });
     
-    // Generate JWT token
-    var token = new JwtSecurityToken(/* Create JWT with user info */);
-    return Results.Ok(new { accessToken = tokenHandler.WriteToken(token) });
+    // 2. Get user info and generate JWT token
+    return Results.Ok(new { accessToken = jwtToken });
 });
 
-// 5. Protected API endpoint
-app.MapGet("/secure/ping", (ClaimsPrincipal user) => {
-    // API requiring JWT authentication
-}).RequireAuthorization();
+record GoogleExchange(string code);
 ```
 
 ### `appsettings.json`
-JWT and Google OAuth configuration:
-
 ```json
 {
   "Jwt": {
@@ -148,37 +104,29 @@ JWT and Google OAuth configuration:
     "Hours": 2
   },
   "Google": {
-    "ClientId": "YOUR_GOOGLE_CLIENT_ID"
+    "ClientId": "YOUR_GOOGLE_CLIENT_ID",
+    "ClientSecret": "YOUR_GOOGLE_CLIENT_SECRET"
+  },
+  "Client": {
+    "Origin": "http://localhost:55592"
   }
 }
 ```
 
-## Pre-Execution Checklist
+## Pre-Execution Setup
 
-### Google Cloud Console Setup
+### Google Cloud Console Configuration
 1. Create OAuth Client ID in [Google Cloud Console](https://console.cloud.google.com)
-2. Select Application type: "Web application"
-3. Add `https://localhost:55922` to **Authorized JavaScript origins**
-4. Apply the generated Client ID to `appsettings.json` and `index.html`
+2. Select Application type: **"Web application"**
+3. Add client address to **Authorized redirect URIs** (e.g., `http://localhost:55592`)
+4. Apply generated **Client ID** and **Client Secret** to configuration files
 
-### Required Configuration Verification
-- [ ] Google Client ID correctly applied to all configuration files
+### Required Configuration Checklist
+- [ ] Google Client ID and Secret applied to configuration files
 - [ ] JWT key is at least 32 characters long
-- [ ] CORS configuration has correct client URL
-
-### Execution and Debugging
-1. Run backend and client simultaneously
-2. Observe authentication process in browser developer tools:
-
-```javascript
-// Check status in console
-console.log("Auth Config:", window.AUTH_CFG);
-console.log("Google Object:", window.google);
-console.log("Current Token:", window.Auth.getToken());
-```
+- [ ] Client address matches server configuration
 
 ### Common Issues
-- **"unregistered_origin"**: Check JavaScript origins in Google Cloud Console
-- **CORS error**: Verify client URL in backend CORS configuration
-- **JWT key length error**: Ensure JWT key is at least 32 bytes
-- **Token time error**: Check system time synchronization status
+- **"redirect_uri_mismatch"**: Check redirect URI in Google Console matches actual client address
+- **CORS error**: Verify `Client:Origin` setting in server configuration
+- **JWT key length error**: Ensure JWT key is at least 32 characters long

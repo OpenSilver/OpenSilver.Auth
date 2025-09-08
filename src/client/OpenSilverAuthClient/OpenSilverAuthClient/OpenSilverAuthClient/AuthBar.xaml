@@ -1,0 +1,50 @@
+﻿<UserControl
+    x:Class="OpenSilverAuthClient.AuthBar"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:OpenSilverAuthClient"
+    Width="Auto" Background="#20232a">
+    <Grid Margin="8" VerticalAlignment="Center">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition />
+            <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Left side: app title or empty spacer -->
+        <TextBlock Text="OpenSilver Auth Demo" 
+                   Foreground="White" 
+                   VerticalAlignment="Center"
+                   FontSize="15"/>
+
+        <!-- Right side: auth area -->
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+            <!-- Unauthenticated -->
+            <StackPanel x:Name="UnauthedPanel" Orientation="Horizontal" Visibility="Collapsed">
+                <Button Click="Login_Click" 
+                        Background="#232323"
+                        Padding="10 4">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Source="/OpenSilverAuthClient;component/images/google.png" 
+                                   Width="20" Height="20" 
+                                   Margin="0 0 10 0"/>
+                            <TextBlock Text="Login with Google"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+            </StackPanel>
+
+            <!-- Authenticated -->
+            <StackPanel x:Name="AuthedPanel" Orientation="Horizontal" Visibility="Collapsed">
+                <TextBlock Text="{Binding Email, RelativeSource={RelativeSource AncestorType=UserControl}}" 
+                           Foreground="White" 
+                           VerticalAlignment="Center" 
+                           Margin="0,0,8,0"/>
+                <Button Content="Logout" 
+                        Click="Logout_Click"
+                        Padding="10 4" />
+            </StackPanel>
+        </StackPanel>
+    </Grid>
+</UserControl>

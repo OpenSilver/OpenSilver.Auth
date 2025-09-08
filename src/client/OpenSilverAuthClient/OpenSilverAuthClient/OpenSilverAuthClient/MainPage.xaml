@@ -1,0 +1,82 @@
+﻿<Page x:Class="OpenSilverAuthClient.MainPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:OpenSilverAuthClient"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      mc:Ignorable="d"
+      Foreground="{DynamicResource Theme_TextBrush}">
+    <Grid Background="{DynamicResource Theme_BackgroundBrush}">
+        <Border Margin="15" 
+                MaxWidth="800"
+                MaxHeight="500"
+                BorderThickness="1"
+                BorderBrush="#55FFFFFF"
+                CornerRadius="12"
+                Padding="15">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <local:AuthBar/>
+
+                <Grid Grid.Row="1" VerticalAlignment="Center"
+                      HorizontalAlignment="Center">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Image Grid.Column="0"
+                           Source="/OpenSilverAuthClient;component/images/opensilver-modern.png"
+                           Width="120" Height="120"
+                           Margin="20,0,40,0"
+                           VerticalAlignment="Center"/>
+
+                    <StackPanel Grid.Column="1" 
+                               VerticalAlignment="Center"
+                               HorizontalAlignment="Left">
+
+                        <TextBlock Text="OpenSilver Auth Demo"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Foreground="White"
+                                   Margin="0,0,0,8"/>
+
+                        <TextBlock Text="ASP.NET Core Minimal API + Google OAuth"
+                                   FontSize="14"
+                                   Foreground="#AAAAAA"
+                                   Margin="0,0,0,20"/>
+
+                        <TextBlock Text="Secure authentication system built with:"
+                                   FontSize="12"
+                                   Foreground="#CCCCCC"
+                                   Margin="0,0,0,8"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                            <Border Background="#61dafb" Padding="4,2" Margin="0,0,8,0" CornerRadius="4">
+                                <TextBlock Text="OpenSilver" FontSize="10" Foreground="Black" FontWeight="Bold"/>
+                            </Border>
+                            <Border Background="#4285f4" Padding="4,2" Margin="0,0,8,0" CornerRadius="4">
+                                <TextBlock Text="Google OAuth" FontSize="10" Foreground="White" FontWeight="Bold"/>
+                            </Border>
+                            <Border Background="#512bd4" Padding="4,2" CornerRadius="4">
+                                <TextBlock Text="ASP.NET Core" FontSize="10" Foreground="White" FontWeight="Bold"/>
+                            </Border>
+                        </StackPanel>
+
+                        <TextBlock Text="Click 'Sign in with Google' above to get started"
+                                   FontSize="11"
+                                   Foreground="#888888"
+                                   Margin="0,15,0,0"/>
+
+                    </StackPanel>
+
+                </Grid>
+
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

@@ -1,0 +1,102 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>OpenSilverAuthClient</title>
+    <base href="/" />
+    <style>
+        :root {
+            --opensilver-loading-background-color: #201f1f;
+            --opensilver-loading-progress-bg: #505050;
+            --opensilver-loading-progress-bar-color: #fff;
+            --opensilver-loading-counter-color: #848181;
+            --opensilver-loading-progress-border-color: #505050;
+        }
+    </style>
+    <script>
+        (function () {
+            const style = document.createElement('link');
+            style.setAttribute('rel', 'stylesheet');
+            style.setAttribute('type', 'text/css');
+            style.setAttribute('href', 'modern/loading-indicator.css?date=' + new Date().toISOString());
+            document.head.appendChild(style);
+            const script = document.createElement('script');
+            script.setAttribute('type', 'application/javascript');
+            script.setAttribute('src', 'modern/loading-animation.js?date=' + new Date().toISOString());
+            document.head.appendChild(script);
+        })();
+
+        window.AUTH_CFG = {
+            apiBase: "https://localhost:7224",
+            googleClientId: "YOUR_GOOGLE_CLIENT_ID",
+            storageKey: "accessToken"
+        };
+
+        window.onGoogleLibraryLoad = function () {
+            console.log("Google library loaded successfully");
+            if (window.Auth && window.Auth.init) {
+                window.Auth.init();
+            }
+        };
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+
+        if (code) {
+            console.log("Processing Google auth callback...");
+            fetch(window.AUTH_CFG.apiBase + "/auth/google", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json"
+                },
+                body: JSON.stringify({ code: code })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    localStorage.setItem(window.AUTH_CFG.storageKey, data.accessToken);
+                    window.dispatchEvent(new CustomEvent("auth:changed"));
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                })
+                .catch(error => {
+                    console.error("Auth callback failed:", error);
+                });
+        }
+    </script>
+</head>
+<body>
+    <div id="app">
+        <div class="opensilver-loading-indicator">
+            <div class="opensilver-loader-container">
+                <div class="opensilver-loader">
+                    <div class="opensilver-loader-progress">
+                        <div class="opensilver-loader-progress-bar"></div>
+                    </div>
+                </div>
+                <div class="opensilver-counter-container">
+                    <span class="opensilver-odometer"></span>
+                    <span class="opensilver-odometer"></span>
+                    <span class="opensilver-odometer"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="opensilver-root" style="position: relative; width: 100%; height: 100%; overflow-x: hidden; overflow-y: hidden"></div>
+    <script src="libs/auth.js"></script>
+    <script>
+        (function () {
+            const script = document.createElement('script');
+            script.setAttribute('type', 'application/javascript');
+            script.setAttribute('src', 'libs/opensilver.js?date=' + new Date().toISOString());
+            script.addEventListener('load', function () {
+                const scriptWebAssembly = document.createElement('script');
+                scriptWebAssembly.setAttribute('type', 'application/javascript');
+                scriptWebAssembly.setAttribute('src', '_framework/blazor.webassembly.js?date=' + new Date().toISOString());
+                document.body.appendChild(scriptWebAssembly);
+            });
+            document.body.appendChild(script);
+        })();
+    </script>
+</body>
+</html>

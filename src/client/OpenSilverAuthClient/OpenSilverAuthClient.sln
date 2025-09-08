@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35919.96 d17.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenSilverAuthClient.Browser", "OpenSilverAuthClient\OpenSilverAuthClient.Browser\OpenSilverAuthClient.Browser.csproj", "{D9292232-C06F-4E0B-B34E-18DC58B391C0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenSilverAuthClient", "OpenSilverAuthClient\OpenSilverAuthClient\OpenSilverAuthClient.csproj", "{D6F2183B-F5C7-4D8D-AE57-9AAD4F3E3FC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenSilverAuthClient.Simulator", "OpenSilverAuthClient\OpenSilverAuthClient.Simulator\OpenSilverAuthClient.Simulator.csproj", "{A37D78B1-4248-4DD2-8366-7A72CBAB07BE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "App", "App", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{75D613EB-8C6B-4A0A-ACB8-D87687C12311}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Server", "Server", "{83CC511E-19FA-48F1-A16C-60CECCAA1B52}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalApi", "..\..\server\MinimalApi\MinimalApi.csproj", "{2B60CA7B-1BE8-2D9A-0862-73935615F934}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D9292232-C06F-4E0B-B34E-18DC58B391C0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9292232-C06F-4E0B-B34E-18DC58B391C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9292232-C06F-4E0B-B34E-18DC58B391C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9292232-C06F-4E0B-B34E-18DC58B391C0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6F2183B-F5C7-4D8D-AE57-9AAD4F3E3FC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6F2183B-F5C7-4D8D-AE57-9AAD4F3E3FC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6F2183B-F5C7-4D8D-AE57-9AAD4F3E3FC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6F2183B-F5C7-4D8D-AE57-9AAD4F3E3FC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A37D78B1-4248-4DD2-8366-7A72CBAB07BE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A37D78B1-4248-4DD2-8366-7A72CBAB07BE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A37D78B1-4248-4DD2-8366-7A72CBAB07BE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A37D78B1-4248-4DD2-8366-7A72CBAB07BE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B60CA7B-1BE8-2D9A-0862-73935615F934}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B60CA7B-1BE8-2D9A-0862-73935615F934}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B60CA7B-1BE8-2D9A-0862-73935615F934}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B60CA7B-1BE8-2D9A-0862-73935615F934}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D9292232-C06F-4E0B-B34E-18DC58B391C0} = {75D613EB-8C6B-4A0A-ACB8-D87687C12311}
+		{D6F2183B-F5C7-4D8D-AE57-9AAD4F3E3FC2} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{A37D78B1-4248-4DD2-8366-7A72CBAB07BE} = {75D613EB-8C6B-4A0A-ACB8-D87687C12311}
+		{2B60CA7B-1BE8-2D9A-0862-73935615F934} = {83CC511E-19FA-48F1-A16C-60CECCAA1B52}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {28369E22-ED40-4F2C-8A43-31D3265FF9E2}
+	EndGlobalSection
+EndGlobal

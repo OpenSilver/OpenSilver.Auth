@@ -18,7 +18,7 @@ OpenSilverAuthClient/
 │   └── AuthBar.xaml                    # Login UI
 ├── OpenSilverAuthClient.Server/        # Server (ASP.NET Core)
 │   ├── Program.cs                      # Backend authentication logic
-│   └── appsettings.json               # JWT and Google settings
+│   └── appsettings.json                # JWT and Google settings
 ```
 
 ## Authentication Flow

@@ -2,6 +2,10 @@
 
 A complete example implementing Google OAuth authentication between an OpenSilver client and ASP.NET Core backend.
 
+<img width="49%" height="804" alt="a22d4ebf347d2ce81b797498bc331e94" src="https://github.com/user-attachments/assets/8900f555-e51b-451a-bd7a-b83009a52e59" />
+<img width="49%" height="848" alt="16d140f85c1d7fdfae6c7616f8eeee26" src="https://github.com/user-attachments/assets/106b2605-3a56-42b8-a205-7822acecc26a" />
+
+
 ## Key Features
 - Google account login (Authorization Code Flow)
 - JWT token-based API security
